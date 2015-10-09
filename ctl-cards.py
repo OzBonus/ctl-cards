@@ -2,25 +2,9 @@ import urllib.request
 import urllib.error
 import os
 
-# This will successfully download the files, but I think I can do better.
-#
-# for book in range(0, 9):
-#     for unit in range(1, 10):
-#         try:
-#             req = urllib.request.Request("http://kids.liveabc.com/placementtest/flashcards/b{}u{}.pdf".format(book, unit))
-#             with urllib.request.urlopen(req) as response:
-#                 flashcards = response.read()
-#                 output = open("Book_{}_Unit_{}.pdf".format(book, unit), "wb")
-#                 output.write(flashcards)
-#         except urllib.error.HTTPError as error:
-#             if error.code == "404":
-#                 print("Book {} does not have a Unit {}".format(book, unit))
-#                 pass
-#             else:
-#                 print("ERROR {}".format(error.code))
-#                 print(error.read())
 
 HOME = os.path.expanduser("~")
+
 
 # Check if ~/CTL-Flashcards exists, and create it if it does not.
 try:
@@ -42,11 +26,12 @@ def get_cards(book, unit):
     script. Other HTML errors will be printed to the console and exit
     the script.
     """
+    directory = HOME + "/CTL-Flashcards/"
     try:
         req = urllib.request.Request("http://kids.liveabc.com/placementtest/flashcards/b{}u{}.pdf".format(book, unit))
         with urllib.request.urlopen(req) as response:
             flashcards = response.read()
-            output = open("Book_{}_Unit_{}.pdf".format(book, unit), "wb")
+            output = open(directory + "Book_{}_Unit_{}.pdf".format(book, unit), "wb")
             output.write(flashcards)
     except urllib.error.HTTPError as error:
         if error.code == 404:
@@ -54,5 +39,8 @@ def get_cards(book, unit):
         else:
             print("Something is seriously wrong! ERROR {}".format(error.code))
             exit()
+
+get_cards(3, 3)
+get_cards(4, 4)
 
 # Check if a file exists, and create it if it does not.
