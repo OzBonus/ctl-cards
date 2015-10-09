@@ -1,0 +1,42 @@
+URL STRUCTURE #################################################################
+
+So this is how LiveABC sorts their vocabulary flashcard pdf files. Fortunately,
+no login is required to scrape their teacher resources. So much for security.
+
+kids.liveabc.com/placementtest/flashcards/b^u*.pdf
+
+The ^ can be a single digit from 0 to 8, representing the book number. Book 0
+is officially called Starter.
+
+The * can be a single digit from 1 to 9, representing a unit of the book.
+
+
+FILE STRUCTURE ################################################################
+
+Every pdf file has an even number of pages. The odd-numbered pages contain the
+images and the even-numbered pages contain English word(s) describing the
+picture on the previous odd-numbered page.
+
+
+PICTURE STRUCTURE #############################################################
+
+There appears to be a single large jpeg file comprising a circular image on a
+blue background. There is a rounded, dashed border around the image that appears
+to be a vector of some sort and another similar black border further towards the
+edge of the paper. The is a text object on top of the lower-right corner of each
+picture that serves as a file name for the individual card.
+
+
+VOCABULARY STRUCTURE ##########################################################
+
+The vocabulary has a similar overall layout the images. Words are large text
+objects. Verbs are occasionally accompanied by thier past tense within
+parentheses and a red character color. Although some vocabulary requires two
+lines, there do not appear to be explicit newline characters.
+
+
+PROGRAM FLOW ##################################################################
+
+1. Download pdfs and save locally.
+2. Extract images from odd-numbered pages and save locally.
+3. Crop images and save locally as png (default) or some other format.
