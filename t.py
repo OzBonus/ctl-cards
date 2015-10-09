@@ -23,8 +23,14 @@ import os
 HOME = os.path.expanduser("~")
 
 # Check if ~/CTL-Flashcards exists, and create it if it does not.
-
-# Check if a file exists, and create it if it does not.
+try:
+    if os.path.isdir(HOME + "/CTL-Flashcards/"):
+        print("CTL-Flashcards directory exists, proceeding there.")
+    else:
+        print("CTL-Flashcards directory does not exist, so it will be created.")
+        os.mkdir(HOME + "/CTL-Flashcards/")
+except:
+    print("Something went wrong while checking for the CTL-Flashcards directory.")
 
 
 def get_cards(book, unit):
@@ -46,9 +52,7 @@ def get_cards(book, unit):
         if error.code == 404:
             print("Book {} does not have a Unit {}".format(book, unit))
         else:
-            print("ERROR {}".format(error.code))
+            print("Something is seriously wrong! ERROR {}".format(error.code))
             exit()
 
-
-get_cards(5, 99)
-get_cards(5, 9)
+# Check if a file exists, and create it if it does not.
