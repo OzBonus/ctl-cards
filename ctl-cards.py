@@ -1,6 +1,7 @@
 import urllib.request
 import urllib.error
 import os
+from wand.image import Image
 
 
 HOME = os.path.expanduser("~")
@@ -58,14 +59,27 @@ def check_and_get_cards():
     print("{} files were already in the directory".format(preexisting_files))
 
 
+def pdf_to_png():
+    """
+    This function iterates over all pdfs in the CTL-Flashcards
+    directory. Each odd-numbered page from each pdf if converted into a
+    500x500 png file by the wand module (because that module can't
+    handle subscripting pdfs by itself, apparently).
+    """
+    pass
+
+
 if __name__ == "__main__":
-    # Check for and/or create ~/CTL-Flashcards/.
-    try:
-        if os.path.isdir(HOME + "/CTL-Flashcards/"):
-            print("CTL-Flashcards directory exists, proceeding there.")
-        else:
-            print("CTL-Flashcards directory does not exist, so it will be created.")
-            os.mkdir(HOME + "/CTL-Flashcards/")
-    except:
-        print("Something went wrong while checking for the CTL-Flashcards directory.")
-    check_and_get_cards()
+    # # Check for and/or create ~/CTL-Flashcards/.
+    # try:
+    #     if os.path.isdir(HOME + "/CTL-Flashcards/"):
+    #         print("CTL-Flashcards directory exists, proceeding there.")
+    #     else:
+    #         print("CTL-Flashcards directory does not exist, so it will be created.")
+    #         os.mkdir(HOME + "/CTL-Flashcards/")
+    # except:
+    #     print("Something went wrong while checking for the CTL-Flashcards directory.")
+    # check_and_get_cards()
+    with Image(filename = HOME + "/CTL-Flashcards/Book_1_Unit_1.pdf") as original:
+        with original.convert("png") as raster:
+            raster.save(filename = HOME + "/CTL-Flashcards/test.png")
