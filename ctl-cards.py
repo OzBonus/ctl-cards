@@ -17,7 +17,7 @@ that sorted out properly.
 __appname__ = "ctl-cards"
 __author__  = "Christopher Perry"
 __email__   = "ozbonus@gmail.com"
-__version__ = "1.0"
+__version__ = "1.1"
 __license__ = "MIT License"
 
 
