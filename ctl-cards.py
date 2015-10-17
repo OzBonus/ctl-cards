@@ -7,16 +7,17 @@ from wand.image import Image
 
 
 HOME = os.path.expanduser("~")
+BASEPATH = HOME + "/CTL-Flashcards/"
 
 
 def prepare_directory():
     try:
-        if os.path.isdir(HOME + "/CTL-Flashcards/"):
+        if os.path.isdir(BASEPATH):
             print("CTL-Flashcards directory exists, proceeding there.")
         else:
             print("CTL-Flashcards directory does not exist, so it will be created.")
-            os.mkdir(HOME + "/CTL-Flashcards/")
-            os.mkdir(HOME + "/CTL-Flashcards/Singles/")
+            os.mkdir(BASEPATH)
+            os.mkdir(BASEPATH + "Singles/")
     except:
         print("Something went wrong while checking for the CTL-Flashcards directory.")
 
@@ -37,7 +38,7 @@ def download_cards(book, unit):
         req = urllib.request.Request("http://kids.liveabc.com/placementtest/flashcards/b{}u{}.pdf".format(book, unit))
         with urllib.request.urlopen(req) as response:
             flashcards = response.read()
-            output = open(directory + file_name, "wb")
+            output = open(BASEPATH + file_name, "wb")
             output.write(flashcards)
             return True
     except urllib.error.HTTPError as error:
@@ -61,7 +62,7 @@ def check_and_get_cards():
     for book in range(0, 9): # The Starter book is considered Book 0 officially.
         for unit in range(1, 10):
             file_name = "Book_{}_Unit_{}.pdf".format(book, unit)
-            if os.path.isfile(HOME + "/CTL-Flashcards/" + file_name):
+            if os.path.isfile(BASEPATH + file_name):
                 print(file_name + " already exists. Proceeding to next file.")
                 preexisting_files += 1
             elif download_cards(book, unit):
@@ -73,38 +74,39 @@ def check_and_get_cards():
     print("{} files were already in the directory".format(preexisting_files))
 
 
-def pdf_to_png(cards_pdf):
+def pdf_to_img(cards_pdf):
     # TODO Try using some filters to make the pictures look less awful.
-    # TODO Explore iterating over files in a directory.
-    # TODO Refactor this function to work for iteration.
     digits = re.findall("\d", cards_pdf)
-    book = digits[0]
-    unit = digits[1]
-    print(book, unit)
+    book = digits[-2] # Index from end in case of numbers in $HOME.
+    unit = digits[-1] # Index from end in case of numbers in $HOME.
     picNum = 1
-    with open(HOME + cards_pdf, "rb") as pdfFileObject:
-        # strict = False is required to stop Wand from possibly throwing a critical error.
+    with open(cards_pdf, "rb") as pdfFileObject:
         pdfReader = PyPDF2.PdfFileReader(pdfFileObject, strict=False)
         for pageNum in range(0, pdfReader.numPages, 2):
-            outFileName = "/CTL-Flashcards/Singles/Book_{}_Unit_{}_Word_{}".format(book, unit, picNum)
+            outFileName = BASEPATH + "Singles/Book_{0}_Unit_{1}_Word_{2:02d}".format(book, unit, picNum)
+            print("Processing Book {0} Unit {1} Word {2:02d}".format(book, unit, picNum))
             pageObject = pdfReader.getPage(pageNum)
             pdfWriter = PyPDF2.PdfFileWriter()
             pdfWriter.addPage(pageObject)
             pdfWriter.removeText()
             pdfWriter.removeLinks()
-            with open(HOME + outFileName + ".pdf", "wb") as singlePagePdf:
+            with open(outFileName + ".pdf", "wb") as singlePagePdf:
                 pdfWriter.write(singlePagePdf)
-            with Image(filename = HOME + outFileName + ".pdf", resolution = 90) as original:
+            with Image(filename = outFileName + ".pdf", resolution = 72) as original:
+                original.colorspace = "hsl"
+                original.modulate(98, 60, 98) # BSH format.
+                original.negate()
                 original.format = "jpeg"
                 original.crop(width=500, height=500, gravity="center")
                 original.compression_quality = 90
-                original.save(filename = HOME + outFileName + ".jpg")
+                original.save(filename = outFileName + ".jpg")
             picNum += 1
+            os.remove(outFileName + ".pdf")
 
 
 if __name__ == "__main__":
-    # prepare_directory()
-    # check_and_get_cards()
-    # for pdf in HOME + "/CTL-Flashcards/":
-    #     print(pdf)
-    pdf_to_png("/CTL-Flashcards/Book_1_Unit_1.pdf")
+    prepare_directory()
+    check_and_get_cards()
+    CONVERT = [f for f in os.listdir(BASEPATH) if os.path.isfile(os.path.join(BASEPATH + f))]
+    for pdf in CONVERT:
+        pdf_to_img(BASEPATH + pdf)
