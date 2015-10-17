@@ -1,3 +1,26 @@
+#!/usr/bin/env python
+
+
+"""
+This script will download all of the PDF flashcard packs from the Come
+to Live website and create 500x500 JPEG versions of each card. All of
+this will be stored in a directory called CTL-Flashcards in the user's
+$HOME directory.
+
+Presently, the conversion from CMYK PDFs to RGB JPEGs causes some color
+distortion that is only partially fixed by adjustments to brightness,
+saturation, and hue. A future version of this script will ideally have
+that sorted out properly.
+"""
+
+
+__appname__ = "ctl-cards"
+__author__  = "Christopher Perry"
+__email__   = "ozbonus@gmail.com"
+__version__ = "1.0"
+__license__ = "MIT License"
+
+
 import urllib.request
 import urllib.error
 import os
@@ -97,7 +120,7 @@ def pdf_to_img(cards_pdf):
                 original.modulate(98, 60, 98) # BSH format.
                 original.negate()
                 original.format = "jpeg"
-                original.crop(width=500, height=500, gravity="center")
+                original.crop(width=500, height=450, gravity="center")
                 original.compression_quality = 90
                 original.save(filename = outFileName + ".jpg")
             picNum += 1
