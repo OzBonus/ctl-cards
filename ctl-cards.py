@@ -1,6 +1,7 @@
 import urllib.request
 import urllib.error
 import os
+import re
 import PyPDF2
 from wand.image import Image
 
@@ -72,14 +73,17 @@ def check_and_get_cards():
     print("{} files were already in the directory".format(preexisting_files))
 
 
-def pdf_to_png(book, unit):
+def pdf_to_png(cards_pdf):
     # TODO Try using some filters to make the pictures look less awful.
     # TODO Explore iterating over files in a directory.
     # TODO Refactor this function to work for iteration.
-    # TODO Use string searching to extract book and unit number from pdf names.
+    digits = re.findall("\d", cards_pdf)
+    book = digits[0]
+    unit = digits[1]
+    print(book, unit)
     picNum = 1
-    with open(HOME + "/CTL-Flashcards/Book_1_Unit_1.pdf", "rb") as pdfFileObject:
-        # strict = False is required to stop Wand from throwing a critical error.
+    with open(HOME + cards_pdf, "rb") as pdfFileObject:
+        # strict = False is required to stop Wand from possibly throwing a critical error.
         pdfReader = PyPDF2.PdfFileReader(pdfFileObject, strict=False)
         for pageNum in range(0, pdfReader.numPages, 2):
             outFileName = "/CTL-Flashcards/Singles/Book_{}_Unit_{}_Word_{}".format(book, unit, picNum)
@@ -93,10 +97,14 @@ def pdf_to_png(book, unit):
             with Image(filename = HOME + outFileName + ".pdf", resolution = 90) as original:
                 original.format = "jpeg"
                 original.crop(width=500, height=500, gravity="center")
+                original.compression_quality = 90
                 original.save(filename = HOME + outFileName + ".jpg")
             picNum += 1
 
 
 if __name__ == "__main__":
-    prepare_directory()
-    pdf_to_png(4, 6)
+    # prepare_directory()
+    # check_and_get_cards()
+    # for pdf in HOME + "/CTL-Flashcards/":
+    #     print(pdf)
+    pdf_to_png("/CTL-Flashcards/Book_1_Unit_1.pdf")
