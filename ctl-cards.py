@@ -34,6 +34,10 @@ BASEPATH = HOME + "/CTL-Flashcards/"
 
 
 def prepare_directory():
+    """
+    Check if the necessary directory and subdirectory exist and create
+    them if they do not.
+    """
     try:
         if os.path.isdir(BASEPATH):
             print("CTL-Flashcards directory exists, proceeding there.")
@@ -98,7 +102,12 @@ def check_and_get_cards():
 
 
 def pdf_to_img(cards_pdf):
-    # TODO Try using some filters to make the pictures look less awful.
+    """
+    This function takes a multi-page PDF as input, extracts each page as
+    a temporary file, creates a JPEG from that file, and finally deletes
+    the temporary single-page PDF. This results are stored in the
+    CTL-Flashcards/Singles/ directory.
+    """
     digits = re.findall("\d", cards_pdf)
     book = digits[-2] # Index from end in case of numbers in $HOME.
     unit = digits[-1] # Index from end in case of numbers in $HOME.
