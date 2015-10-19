@@ -3,7 +3,7 @@
 
 """
 This script will download all of the PDF flashcard packs from the Come
-to Live website and create 500x500 JPEG versions of each card. All of
+to Live website and create 680x450 JPEG versions of each card. All of
 this will be stored in a directory called CTL-Flashcards in the user's
 $HOME directory.
 
@@ -17,7 +17,7 @@ that sorted out properly.
 __appname__ = "ctl-cards"
 __author__  = "Christopher Perry"
 __email__   = "ozbonus@gmail.com"
-__version__ = "1.1"
+__version__ = "1.2"
 __license__ = "MIT License"
 
 
@@ -120,8 +120,8 @@ def pdf_to_img(cards_pdf):
             pageObject = pdfReader.getPage(pageNum)
             pdfWriter = PyPDF2.PdfFileWriter()
             pdfWriter.addPage(pageObject)
-            pdfWriter.removeText()
-            pdfWriter.removeLinks()
+            # pdfWriter.removeText()
+            # pdfWriter.removeLinks()
             with open(outFileName + ".pdf", "wb") as singlePagePdf:
                 pdfWriter.write(singlePagePdf)
             with Image(filename = outFileName + ".pdf", resolution = 72) as original:
@@ -129,7 +129,7 @@ def pdf_to_img(cards_pdf):
                 original.modulate(98, 60, 98) # BSH format.
                 original.negate()
                 original.format = "jpeg"
-                original.crop(width=500, height=450, gravity="center")
+                original.crop(width=680, height=450, gravity="center")
                 original.compression_quality = 90
                 original.save(filename = outFileName + ".jpg")
             picNum += 1
